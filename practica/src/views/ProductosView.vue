@@ -3,6 +3,7 @@
     <Menu />
     <Product />
     <PiePagina />
+    
   </div>
 </template>
 
@@ -12,6 +13,7 @@
 import Menu from '@/components/Menu.vue'
 import Product from '@/components/Product.vue'
 import PiePagina from '@/components/PiePagina.vue'
+
 
 /////////
 

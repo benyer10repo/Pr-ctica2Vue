@@ -1,6 +1,7 @@
 <template>
+    
     <div >
-      
+        
 
       <div class="container">
 
@@ -19,7 +20,7 @@
         <h5>Color</h5>
         <div v-for="(n,j) in producto.colores" class="col-12 col-sm-12  col-md-12" style="display: inline;">
            
-            <input type="radio" class="btn-check " name="options" :id="j+1" autocomplete="off" v-bind:value="n">
+            <input type="radio" class="btn-check " @change="color($event)" name="options" :id="j+1" autocomplete="off" v-bind:value="n">
             <label class="btn color-box clic" :for="j+1"  :style="{ 'background': n }" ></label>
             
         
@@ -29,7 +30,7 @@
             <button v-on:click="counter -=1">-</button> <div id="ca">{{counter}}</div> <button v-on:click="counter +=1">+</button>
         </div>
         <div class="buy-box">
-            <button v-if="comparar(counter)"   v-on:click="comprar(producto.id,counter)" type="button" class="btn btn-primary">Comprar</button>
+            <button v-if="comparar(counter)"   v-on:click="comprar(producto.id)" type="button" class="btn btn-primary">Comprar</button>
             <button v-else="comparar(counter)" type="button" class="btn btn-primary" disabled>Comprar</button>
         </div>
         
@@ -44,10 +45,10 @@
 <div class="row col-12">
     <h4>Productos relacionados</h4>
 </div>
-<div class="row col-4" v-for="p in productosRelacionados" style="display: inline-block;" >
+<div class="row col-4" v-for="(p, key) in productosRelacionados"  style="display: inline-block;" >
     
     <div class="col">
-        <div class="card" style="width: 18rem;">
+        <div class="card" style="width: 18rem;" v-on:click="detalle(event, key)">
             <div class="card-body">
                 <h5 class="card-title">{{p.nombre}}</h5>
                 <img :src="p.imagen" class="img-fluid">
@@ -71,6 +72,7 @@
 </div>
 
     </div>
+    
 </template>
 
 
@@ -86,29 +88,23 @@ export default {
       precioEstilos: "background: orangered; color: white; font-weight: bold",
       productosRelacionados:[],
       producto:{},
-      counter:0
+      counter:0,
+      colorn:"",
     }
   },
   methods:{
-    comparar: function ()
+    comparar()
     {
-        return this.counter >0;
+        return this.counter >0 && this.colorn.length > 0;
     },
-    color: function (n)
+    color(event)
     {
-        var n = '';
-        var ele = document.getElementsByName('options');
-        for(i = 0; i < ele.length; i++) {
-            if(ele[i].checked)
-                n = ele[i].value;
-        }
+        this.colorn = event.target.value;
+        console.log(this.colorn);
+    },
+    comprar() {
         
-    return n;
-    },
-    comprar: function (id,counter,n) {
-      
-      alert('pedidos\n{\nid: ' + this.producto.id + '\ncantidad: ' + this.counter + '\ncolor: '+ this.color(n)  +'\n}');
-      
+        this.$notify({type: "success" ,text:'pedidos\n{\nid: ' + this.producto.id + '\ncantidad: ' + this.counter + '\ncolor: '+ this.colorn +'\n}'});   
       
     },
       getProductos(){
@@ -120,13 +116,25 @@ export default {
         })
         .catch((err)=>{console.log(err);})
         
-      }
+      },
+    detalle(e, key){
+        this.axios.get("http://localhost:5000/Productos")
+        .then((response)=>{
+          console.log(response.data);
+          this.producto = response.data[key];
+        })
+        .catch((err)=>{console.log(err);})
+
+        
+        console.log(" id es : "+ key);
+    }
   },
   computed:{
 
   },
   mounted(){
     this.getProductos();
+    
   },
   components:{
 

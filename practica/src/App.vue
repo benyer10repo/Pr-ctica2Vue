@@ -5,6 +5,7 @@
     <router-link to="/productos">Productos</router-link>
   </nav>
   <router-view/>
+  <notifications  :width="700" position="top right" />
 </template>
 
 <style lang="scss">
